@@ -5,10 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.faircorp.OnWindowSelectedListener
+import com.example.faircorp.BuildingWindows
 import com.example.faircorp.R
 
-class WindowAdapter(val listener: OnWindowSelectedListener): RecyclerView.Adapter<WindowAdapter.WindowViewHolder>() {
+class WindowAdapter(val listener: BuildingWindows): RecyclerView.Adapter<WindowAdapter.WindowViewHolder>() {
 
     inner class WindowViewHolder(view: View) : RecyclerView.ViewHolder(view) { // (2)
         val name: TextView = view.findViewById(R.id.txt_window_name)

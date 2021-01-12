@@ -11,4 +11,12 @@ class ApiServices {
             .build()
             .create(WindowApiService::class.java)
     }
+
+    val roomsApiService: RoomApiService by lazy {
+        Retrofit.Builder()
+            .addConverterFactory(MoshiConverterFactory.create())
+            .baseUrl("https://app-44bd6d58-39ed-47ff-80d6-41c320283b4d.cleverapps.io/api/")
+            .build()
+            .create(RoomApiService::class.java)
+    }
 }
