@@ -1,13 +1,19 @@
 package com.example.faircorp
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v7.widget.DividerItemDecoration
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import android.widget.Toast
+import com.example.faircorp.model.ApiServices
 import com.example.faircorp.model.WindowAdapter
 import com.example.faircorp.model.WindowService
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
 
 class BuildingWindows : BasicActivity(), OnWindowSelectedListener {
     val windowService = WindowService() // (1)
@@ -25,7 +31,24 @@ class BuildingWindows : BasicActivity(), OnWindowSelectedListener {
         recyclerView.setHasFixedSize(true)
         recyclerView.adapter = adapter
 
-        adapter.update(windowService.findAll()) // (4)
+        //adapter.update(windowService.findAll()) // (4)
+        lifecycleScope.launch(context = Dispatchers.IO) { // (1)
+            runCatching { ApiServices().windowsApiService.findAll().execute() } // (2)
+                .onSuccess {
+                    withContext(context = Dispatchers.Main) { // (3)
+                        adapter.update(it.body() ?: emptyList())
+                    }
+                }
+                .onFailure {
+                    withContext(context = Dispatchers.Main) { // (3)
+                        Toast.makeText(
+                            applicationContext,
+                            "Error on windows loading $it",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                }
+        }
     }
 
     override fun onWindowSelected(id: Long) {
